@@ -23,7 +23,7 @@ namespace c4_model_design
 
             // 1. Diagrama de Contexto
             SoftwareSystem travelSystem = model.AddSoftwareSystem("LifeTravel Application", "Permite la comunicacion entre usarios de la plataforma y maneja peticiones.");
-            SoftwareSystem firebaseAPI = model.AddSoftwareSystem("Google Firebase", "Plataforma que ofrece una API para la autenticacion de usuarios.");
+            SoftwareSystem firebaseAPI = model.AddSoftwareSystem("Google Firebase", "Plataforma que ofrece una API para la autenticacion de usuarios y almacenamiento de datos con Firestore.");
             SoftwareSystem paypalAPI = model.AddSoftwareSystem("Paypal", "Plataforma que ofrece una API para integrar pagos dentro de la aplicacion por medio de Paypal");
             Person viajero = model.AddPerson("Usuario Viajero", "Usuario que desea establecer una conexión con el sistema.");
             Person agencia = model.AddPerson("Agencia de Viajes", "Usuario que desea establecer una conexión con el sistema.");
@@ -60,11 +60,11 @@ namespace c4_model_design
             Container apiRest = travelSystem.AddContainer("API Rest", "Proporciona las funcionalidades mediante un API", "NodeJS (NestJS) port 8080");
             Container database = travelSystem.AddContainer("Database", "", "MYSQL");
             Container tripPlanningContext = travelSystem.AddContainer("Trip Planning Context", "Bounded Context del Microservicio de Planificación de Viajes", "NodeJS (NestJS)");
-            Container newServiceContext = travelSystem.AddContainer("New Service Context", "Bounded Context del Microservicio de Servicios", "NodeJS (NestJS)");
+            Container newServiceContext = travelSystem.AddContainer("Service Context", "Bounded Context del Microservicio de Servicios", "NodeJS (NestJS)");
             Container reservationContext = travelSystem.AddContainer("Reservation Context", "Bounded Context del Microservicio de Reservas de Viajes", "NodeJS (NestJS)");
             Container authenticationContext = travelSystem.AddContainer("Authentication Context", "Bounded Context del Microservicio de Autenticación", "NodeJS (NestJS)");
             Container paymentContext = travelSystem.AddContainer("Payment Context", "Bounded Context del Microservicio de Pagos", "NodeJS (NestJS)");
-
+            Container storageContext = travelSystem.AddContainer("Storage Context", "Bounded Context de Almacenamiento", "NodeJS (NestJS)");
 
             viajero.Uses(landingPage, "Consulta/Visita");
             viajero.Uses(mobileApplication, "Consulta/Visita");
@@ -86,11 +86,12 @@ namespace c4_model_design
             tripPlanningContext.Uses(database, "", "JDBC");
             newServiceContext.Uses(database, "", "JDBC");
             reservationContext.Uses(database, "", "JDBC");
-            authenticationContext.Uses(database, "", "JDBC");
             paymentContext.Uses(database, "", "JDBC");
+            storageContext.Uses(database, "", "JDBC");
 
             paymentContext.Uses(paypalAPI,"API Request", "JSON/HTTPS");
             authenticationContext.Uses(firebaseAPI, "API Request", "JSON/HTTPS");
+            storageContext.Uses(firebaseAPI, "API Request", "JSON/HTTPS");
 
             // Tags
             mobileApplication.AddTags("MobileApp");
@@ -103,6 +104,7 @@ namespace c4_model_design
             reservationContext.AddTags("ReservationContext");
             authenticationContext.AddTags("AuthenticationContext");
             paymentContext.AddTags("PaymentContext");
+            storageContext.AddTags("StorageContext");
 
             styles.Add(new ElementStyle("MobileApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.MobileDevicePortrait, Icon = "" });
             styles.Add(new ElementStyle("WebApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.WebBrowser, Icon = "" });
@@ -114,7 +116,7 @@ namespace c4_model_design
             styles.Add(new ElementStyle("ReservationContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("AuthenticationContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("PaymentContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-
+            styles.Add(new ElementStyle("StorageContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             ContainerView containerView = viewSet.CreateContainerView(travelSystem, "Contenedor", "Diagrama de contenedores");
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
