@@ -121,6 +121,36 @@ namespace c4_model_design
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
 
+            //3. Diagrama de Componentes
+            //Bounded Context Trip Travel
+            Component tripPlanDomainLayer = tripPlanningContext.AddComponent("Domain Layer", "", "NodeJS (NestJS)");
+            Component tripPlanController = tripPlanningContext.AddComponent("Trip Plan Controller", "REST API endpoints de planes.", "NodeJS (NestJS) REST Controller");
+            Component tripPlanService = tripPlanningContext.AddComponent("Plan Application Service", "Provee métodos para los planes, pertenece a la capa Application de DDD", "NestJS Component");
+            Component planRepository = tripPlanningContext.AddComponent("Plan Repository", "Información del plan", "NestJS Component");
+            
+
+            apiRest.Uses(tripPlanController,"JSON");
+            tripPlanController.Uses(tripPlanService,"Use");
+            tripPlanService.Uses(planRepository,"Use");
+            tripPlanService.Uses(tripPlanDomainLayer,"");
+            planRepository.Uses(database,"","JDBC");
+            //tags
+            tripPlanDomainLayer.AddTags("Component");
+            tripPlanController.AddTags("Component");
+            tripPlanService.AddTags("Component");
+            planRepository.AddTags("Component");
+
+            //style
+            styles.Add(new ElementStyle("Component") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+
+            ComponentView planComponentView = viewSet.CreateComponentView(tripPlanningContext, "Plan Components", "Component Diagram");
+            planComponentView.PaperSize = PaperSize.A4_Landscape;
+            planComponentView.Add(mobileApplication);   
+            planComponentView.Add(webApplication);
+            planComponentView.Add(apiRest);
+            planComponentView.Add(database);
+            planComponentView.AddAllComponents();
+
             structurizrClient.UnlockWorkspace(workspaceId);
             structurizrClient.PutWorkspace(workspaceId, workspace);
         }
