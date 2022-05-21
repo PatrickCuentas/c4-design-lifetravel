@@ -154,12 +154,44 @@ namespace c4_model_design
             styles.Add(new ElementStyle("Component") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
 
             ComponentView planComponentView = viewSet.CreateComponentView(tripPlanningContext, "Plan Components", "Component Diagram");
+
             planComponentView.PaperSize = PaperSize.A4_Landscape;
-            planComponentView.Add(mobileApplication);   
+            planComponentView.Add(mobileApplication);
             planComponentView.Add(webApplication);
             planComponentView.Add(apiRest);
             planComponentView.Add(database);
             planComponentView.AddAllComponents();
+
+
+
+            //3. Diagrama de Componentes
+            //Bounded Context Authentication
+            Component authenticationDomainLayer = authenticationContext.AddComponent("Domain Layer", "", "NodeJS (NestJS)");
+            Component authenticationController = authenticationContext.AddComponent("Authentication Controller", "REST API endpoints de autenticacion.", "NodeJS (NestJS) REST Controller");
+            Component authenticationService = authenticationContext.AddComponent("Authentication Application Service", "Provee métodos para al autenticación, pertenece a la capa Application de DDD", "NestJS Component");
+
+            apiRest.Uses(authenticationController, "JSON");
+            authenticationController.Uses(authenticationService, "Use");
+            authenticationService.Uses(authenticationDomainLayer, "");
+            authenticationService.Uses(firebaseAPI, "", "HTTPS/JSON");
+
+            //tags
+            tripPlanDomainLayer.AddTags("Component");
+            tripPlanController.AddTags("Component");
+            tripPlanService.AddTags("Component");
+
+            //style
+            //styles.Add(new ElementStyle("Component") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+
+            ComponentView authenticationComponentView = viewSet.CreateComponentView(authenticationContext, "Autentication Components", " Component Diagram");
+
+            authenticationComponentView.PaperSize = PaperSize.A4_Landscape;
+            authenticationComponentView.Add(mobileApplication);
+            authenticationComponentView.Add(webApplication);
+            authenticationComponentView.Add(apiRest);
+            authenticationComponentView.Add(firebaseAPI);
+            authenticationComponentView.AddAllComponents();
+
 
             structurizrClient.UnlockWorkspace(workspaceId);
             structurizrClient.PutWorkspace(workspaceId, workspace);
