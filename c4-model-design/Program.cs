@@ -65,6 +65,8 @@ namespace c4_model_design
             Container authenticationContext = travelSystem.AddContainer("Authentication Context", "Bounded Context del Microservicio de Autenticación", "NodeJS (NestJS)");
             Container paymentContext = travelSystem.AddContainer("Payment Context", "Bounded Context del Microservicio de Pagos", "NodeJS (NestJS)");
             Container storageContext = travelSystem.AddContainer("Storage Context", "Bounded Context de Almacenamiento", "NodeJS (NestJS)");
+            Container cardContext = travelSystem.AddContainer("Card Context", "Bounded Context para Tarjetas de debito y credito", "NodeJS (NestJS)");
+
 
             viajero.Uses(landingPage, "Consulta/Visita");
             viajero.Uses(mobileApplication, "Consulta/Visita");
@@ -82,16 +84,21 @@ namespace c4_model_design
             apiRest.Uses(reservationContext, "", "");
             apiRest.Uses(authenticationContext, "", "");
             apiRest.Uses(paymentContext, "", "");
+            apiRest.Uses(cardContext, "", "");
 
             tripPlanningContext.Uses(database, "", "JDBC");
             newServiceContext.Uses(database, "", "JDBC");
             reservationContext.Uses(database, "", "JDBC");
             paymentContext.Uses(database, "", "JDBC");
             storageContext.Uses(database, "", "JDBC");
+            cardContext.Uses(database, "", "JDBC");
 
             paymentContext.Uses(paypalAPI,"API Request", "JSON/HTTPS");
             authenticationContext.Uses(firebaseAPI, "API Request", "JSON/HTTPS");
             storageContext.Uses(firebaseAPI, "API Request", "JSON/HTTPS");
+            cardContext.Uses(firebaseAPI, "API Request", "JSON/HTTPS");
+            cardContext.Uses(paypalAPI, "API Request", "JSON/HTTPS");
+
 
             // Tags
             mobileApplication.AddTags("MobileApp");
@@ -105,6 +112,7 @@ namespace c4_model_design
             authenticationContext.AddTags("AuthenticationContext");
             paymentContext.AddTags("PaymentContext");
             storageContext.AddTags("StorageContext");
+            cardContext.AddTags("CardContext");
 
             styles.Add(new ElementStyle("MobileApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.MobileDevicePortrait, Icon = "" });
             styles.Add(new ElementStyle("WebApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.WebBrowser, Icon = "" });
@@ -117,6 +125,8 @@ namespace c4_model_design
             styles.Add(new ElementStyle("AuthenticationContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("PaymentContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("StorageContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("CardContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
+
             ContainerView containerView = viewSet.CreateContainerView(travelSystem, "Contenedor", "Diagrama de contenedores");
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
