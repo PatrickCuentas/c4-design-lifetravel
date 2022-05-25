@@ -12,9 +12,9 @@ namespace c4_model_design
 
         static void Travel()
         {
-            const long workspaceId = 73751;
-            const string apiKey = "aa93ba68-1800-4ae9-b6bd-272b25ed0798";
-            const string apiSecret = "21cd2ada-7e7e-4256-ae4a-4fabf6ea423d";
+            const long workspaceId = 74389;
+            const string apiKey = "afcadd4d-8689-41ba-8921-8684ccb8f581";
+            const string apiSecret = "25fb17e7-8066-4ea3-8106-ebc6476f4a66";
 
             StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret);
             Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - LifeTravel", "LifeTravel");
@@ -192,6 +192,36 @@ namespace c4_model_design
             authenticationComponentView.Add(firebaseAPI);
             authenticationComponentView.AddAllComponents();
 
+
+            //3. Diagrama de Componentes
+            //Bounded Context Card
+            Component cardDomainLayer = cardContext.AddComponent("Domain Layer", "", "NodeJS (NestJS)");
+            Component cardController = cardContext.AddComponent("Card Controller", "REST API endpoints de card.", "NodeJS (NestJS) REST Controller");
+            Component cardService = cardContext.AddComponent("Card Application Service", "Provee métodos para al card, pertenece a la capa Application de DDD", "NestJS Component");
+
+            apiRest.Uses(cardController, "JSON");
+            cardController.Uses(cardService, "Use");
+            cardService.Uses(cardDomainLayer, "");
+            cardService.Uses(firebaseAPI, "", "HTTPS/JSON");
+            cardService.Uses(paypalAPI, "", "HTTPS/JSON");
+
+            //tags
+            tripPlanDomainLayer.AddTags("Component");
+            tripPlanController.AddTags("Component");
+            tripPlanService.AddTags("Component");
+
+            //style
+            //styles.Add(new ElementStyle("Component") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+
+            ComponentView cardComponentView = viewSet.CreateComponentView(cardContext, "Card Components", " Component Diagram");
+
+            cardComponentView.PaperSize = PaperSize.A4_Landscape;
+            cardComponentView.Add(mobileApplication);
+            cardComponentView.Add(webApplication);
+            cardComponentView.Add(apiRest);
+            cardComponentView.Add(firebaseAPI);
+            cardComponentView.Add(paypalAPI);
+            cardComponentView.AddAllComponents();
 
             structurizrClient.UnlockWorkspace(workspaceId);
             structurizrClient.PutWorkspace(workspaceId, workspace);
